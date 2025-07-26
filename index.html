@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Fijian - Bula!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #d2b48c 0%, #deb887 20%, #87ceeb 60%, #20b2aa 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 50%, rgba(240, 248, 255, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(32, 178, 170, 0.1) 0%, rgba(135, 206, 235, 0.1) 50%, rgba(210, 180, 140, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .category-card:hover::before {
+            opacity: 1;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .category-icon {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+        }
+
+        .category-title {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.4rem;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .phrase-list {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .phrase-list.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .phrase-item {
+            background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #ff6b6b;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .phrase-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .phrase-fijian {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.25rem;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 5px;
+            letter-spacing: -0.01em;
+        }
+
+        .phrase-english {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .phrase-pronunciation {
+            color: #e74c3c;
+            font-style: italic;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .play-button {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255,107,107,0.4);
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            height: 8px;
+            border-radius: 4px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #ff6b6b, #feca57);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'Quicksand', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .floating-action {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-action:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 12px 35px rgba(255,107,107,0.6);
+        }
+
+        @media (max-width: 768px) {
+            .categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .header {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌺 Bula! Learn Fijian 🌺</h1>
+            <p>Master essential Fijian phrases for your tropical adventure</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="categories" id="categories">
+            <!-- Categories will be populated by JavaScript -->
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalPhrases">0</div>
+                <div class="stat-label">Total Phrases</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="learnedCount">0</div>
+                <div class="stat-label">Learned</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="progressPercent">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="floating-action" onclick="showRandomPhrase()" title="Random Phrase">
+        🔀
+    </button>
+
+    <script>
+        const fijianData = {
+            "Greetings & Basics": {
+                icon: "waving_hand",
+                phrases: [
+                    { fijian: "Bula", english: "Hello/Welcome", pronunciation: "BOO-lah" },
+                    { fijian: "Ni sa bula", english: "Hello (formal)", pronunciation: "nee sah BOO-lah" },
+                    { fijian: "Moce", english: "Goodbye", pronunciation: "MO-they" },
+                    { fijian: "Ni sa moce", english: "Goodbye (formal)", pronunciation: "nee sah MO-they" },
+                    { fijian: "Vinaka", english: "Thank you", pronunciation: "vee-NAH-kah" },
+                    { fijian: "Vinaka vakalevu", english: "Thank you very much", pronunciation: "vee-NAH-kah vah-kah-LEH-voo" },
+                    { fijian: "Kerekere", english: "Please/Excuse me", pronunciation: "keh-reh-KEH-reh" },
+                    { fijian: "Tulou", english: "Excuse me (passing by)", pronunciation: "too-LOW" }
+                ]
+            },
+            "Essential Travel": {
+                icon: "flight",
+                phrases: [
+                    { fijian: "Vei keda?", english: "Where is...?", pronunciation: "VAY keh-dah" },
+                    { fijian: "Vica na lavo?", english: "How much does it cost?", pronunciation: "VEE-thah nah LAH-vo" },
+                    { fijian: "Au sega ni kaya", english: "I don't understand", pronunciation: "AH-oo SEH-nga nee KAH-yah" },
+                    { fijian: "Bose tale", english: "Say it again", pronunciation: "BO-seh TAH-leh" },
+                    { fijian: "Au via kana", english: "I want to eat", pronunciation: "AH-oo VEE-ah KAH-nah" },
+                    { fijian: "Dua na bilo wai", english: "One glass of water", pronunciation: "DOO-ah nah BEE-lo WHY" },
+                    { fijian: "Vei keda na vale ni kana?", english: "Where is the restaurant?", pronunciation: "VAY keh-dah nah VAH-leh nee KAH-nah" }
+                ]
+            },
+            "Food & Dining": {
+                icon: "restaurant",
+                phrases: [
+                    { fijian: "Kakana", english: "Food", pronunciation: "kah-KAH-nah" },
+                    { fijian: "Wai", english: "Water", pronunciation: "WHY" },
+                    { fijian: "Kope", english: "Coffee", pronunciation: "KO-peh" },
+                    { fijian: "Ti", english: "Tea", pronunciation: "TEE" },
+                    { fijian: "Ika", english: "Fish", pronunciation: "EE-kah" },
+                    { fijian: "Vuaka", english: "Pork", pronunciation: "voo-AH-kah" },
+                    { fijian: "Manoko", english: "Chicken", pronunciation: "mah-NO-ko" },
+                    { fijian: "Roti", english: "Bread", pronunciation: "RO-tee" },
+                    { fijian: "Au marau", english: "I'm full", pronunciation: "AH-oo mah-RAH-oo" }
+                ]
+            },
+            "Numbers & Time": {
+                icon: "schedule",
+                phrases: [
+                    { fijian: "Dua", english: "One", pronunciation: "DOO-ah" },
+                    { fijian: "Rua", english: "Two", pronunciation: "ROO-ah" },
+                    { fijian: "Tolu", english: "Three", pronunciation: "TO-loo" },
+                    { fijian: "Va", english: "Four", pronunciation: "VAH" },
+                    { fijian: "Lima", english: "Five", pronunciation: "LEE-mah" },
+                    { fijian: "Ono", english: "Six", pronunciation: "O-no" },
+                    { fijian: "Vitu", english: "Seven", pronunciation: "VEE-too" },
+                    { fijian: "Walu", english: "Eight", pronunciation: "WAH-loo" },
+                    { fijian: "Ciwa", english: "Nine", pronunciation: "THEE-wah" },
+                    { fijian: "Tini", english: "Ten", pronunciation: "TEE-nee" }
+                ]
+            },
+            "Directions & Places": {
+                icon: "place",
+                phrases: [
+                    { fijian: "Matamata", english: "Beach", pronunciation: "mah-tah-MAH-tah" },
+                    { fijian: "Suva", english: "Capital city", pronunciation: "SOO-vah" },
+                    { fijian: "Koro", english: "Village", pronunciation: "KO-ro" },
+                    { fijian: "Vale", english: "House", pronunciation: "VAH-leh" },
+                    { fijian: "Matasawa", english: "Airport", pronunciation: "mah-tah-SAH-wah" },
+                    { fijian: "Cake", english: "Up/Above", pronunciation: "THAH-keh" },
+                    { fijian: "Ra", english: "Down/Below", pronunciation: "RAH" },
+                    { fijian: "Yasawa", english: "Left", pronunciation: "yah-SAH-wah" },
+                    { fijian: "Matau", english: "Right", pronunciation: "mah-TAH-oo" }
+                ]
+            }
+        };
+
+        let learnedPhrases = new Set();
+        let totalPhrasesCount = 0;
+
+        function initializeApp() {
+            const categoriesContainer = document.getElementById('categories');
+            totalPhrasesCount = Object.values(fijianData).reduce((sum, category) => sum + category.phrases.length, 0);
+            
+            Object.entries(fijianData).forEach(([categoryName, categoryData]) => {
+                const categoryCard = createCategoryCard(categoryName, categoryData);
+                categoriesContainer.appendChild(categoryCard);
+            });
+
+            updateStats();
+        }
+
+        function createCategoryCard(name, data) {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            
+            const isActive = card.querySelector('.phrase-list')?.classList.contains('active');
+            
+            // Icon mapping for better display
+            const iconMap = {
+                'waving_hand': '👋',
+                'flight': '✈️',
+                'restaurant': '🍽️',
+                'schedule': '⏰',
+                'place': '📍'
+            };
+            
+            card.innerHTML = `
+                <div class="category-header">
+                    <div class="category-icon">
+                        ${iconMap[data.icon] || '🌺'}
+                    </div>
+                    <div class="category-title">${name}</div>
+                </div>
+                <div class="phrase-list ${isActive ? 'active' : ''}">
+                    ${data.phrases.map(phrase => createPhraseItem(phrase)).join('')}
+                </div>
+            `;
+
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.play-button')) return;
+                
+                const phraseList = card.querySelector('.phrase-list');
+                const wasActive = phraseList.classList.contains('active');
+                
+                // Close all other categories
+                document.querySelectorAll('.phrase-list').forEach(list => {
+                    list.classList.remove('active');
+                });
+                
+                // Toggle current category
+                if (!wasActive) {
+                    phraseList.classList.add('active');
+                }
+            });
+
+            return card;
+        }
+
+        function createPhraseItem(phrase) {
+            return `
+                <div class="phrase-item" onclick="markAsLearned(this)">
+                    <div class="phrase-fijian">${phrase.fijian}</div>
+                    <div class="phrase-english">${phrase.english}</div>
+                    <div class="phrase-pronunciation">
+                        Pronunciation: ${phrase.pronunciation}
+                        <button class="play-button" onclick="speakPhrase('${phrase.fijian}', event)">
+                            🔊
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function speakPhrase(text, event) {
+            event.stopPropagation();
+            
+            const button = event.target.closest('.play-button');
+            button.style.transform = 'scale(1.2)';
+            
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                // Wait a moment then speak
+                setTimeout(() => {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 0.7;
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
+                    
+                    // Try to find a suitable voice
+                    const voices = speechSynthesis.getVoices();
+                    if (voices.length > 0) {
+                        // Prefer female voices or first available voice
+                        const preferredVoice = voices.find(voice => 
+                            voice.name.toLowerCase().includes('female') || 
+                            voice.name.toLowerCase().includes('karen') ||
+                            voice.name.toLowerCase().includes('samantha')
+                        ) || voices[0];
+                        utterance.voice = preferredVoice;
+                    }
+                    
+                    utterance.onstart = function() {
+                        button.textContent = '🔇';
+                        button.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+                    };
+                    
+                    utterance.onend = function() {
+                        button.textContent = '🔊';
+                        button.style.background = 'linear-gradient(135deg, #ff6b6b, #feca57)';
+                        button.style.transform = 'scale(1)';
+                    };
+                    
+                    utterance.onerror = function(event) {
+                        console.log('Speech error:', event.error);
+                        button.textContent = '❌';
+                        setTimeout(() => {
+                            button.textContent = '🔊';
+                            button.style.transform = 'scale(1)';
+                        }, 1000);
+                    };
+                    
+                    try {
+                        speechSynthesis.speak(utterance);
+                    } catch (error) {
+                        console.log('Speech synthesis error:', error);
+                        alert('Audio not supported on this device/browser. Please use the pronunciation guide text instead.');
+                    }
+                }, 100);
+                
+            } else {
+                alert('Speech synthesis not supported on this device. Please refer to the pronunciation guides instead!');
+                button.style.transform = 'scale(1)';
+            }
+        }
+
+        function markAsLearned(phraseElement) {
+            const fijianText = phraseElement.querySelector('.phrase-fijian').textContent;
+            
+            if (!learnedPhrases.has(fijianText)) {
+         
