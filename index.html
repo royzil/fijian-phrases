@@ -50,11 +50,6 @@
             line-height: 1.2;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
         .header p {
             font-size: clamp(1rem, 2.5vw, 1.2rem);
             opacity: 0.9;
@@ -410,9 +405,6 @@
             const card = document.createElement('div');
             card.className = 'category-card';
             
-            const isActive = card.querySelector('.phrase-list')?.classList.contains('active');
-            
-            // Icon mapping for better display
             const iconMap = {
                 'waving_hand': '👋',
                 'flight': '✈️',
@@ -428,7 +420,7 @@
                     </div>
                     <div class="category-title">${name}</div>
                 </div>
-                <div class="phrase-list ${isActive ? 'active' : ''}">
+                <div class="phrase-list">
                     ${data.phrases.map(phrase => createPhraseItem(phrase)).join('')}
                 </div>
             `;
@@ -439,12 +431,10 @@
                 const phraseList = card.querySelector('.phrase-list');
                 const wasActive = phraseList.classList.contains('active');
                 
-                // Close all other categories
                 document.querySelectorAll('.phrase-list').forEach(list => {
                     list.classList.remove('active');
                 });
                 
-                // Toggle current category
                 if (!wasActive) {
                     phraseList.classList.add('active');
                 }
@@ -475,20 +465,16 @@
             button.style.transform = 'scale(1.2)';
             
             if ('speechSynthesis' in window) {
-                // Cancel any ongoing speech
                 speechSynthesis.cancel();
                 
-                // Wait a moment then speak
                 setTimeout(() => {
                     const utterance = new SpeechSynthesisUtterance(text);
                     utterance.rate = 0.7;
                     utterance.pitch = 1.0;
                     utterance.volume = 1.0;
                     
-                    // Try to find a suitable voice
                     const voices = speechSynthesis.getVoices();
                     if (voices.length > 0) {
-                        // Prefer female voices or first available voice
                         const preferredVoice = voices.find(voice => 
                             voice.name.toLowerCase().includes('female') || 
                             voice.name.toLowerCase().includes('karen') ||
@@ -535,4 +521,48 @@
             const fijianText = phraseElement.querySelector('.phrase-fijian').textContent;
             
             if (!learnedPhrases.has(fijianText)) {
-         
+                learnedPhrases.add(fijianText);
+                phraseElement.style.background = 'linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(39, 174, 96, 0.2))';
+                phraseElement.style.borderLeftColor = '#2ecc71';
+                
+                const checkmark = document.createElement('span');
+                checkmark.innerHTML = '✓';
+                checkmark.style.cssText = 'position: absolute; top: 10px; right: 15px; color: #2ecc71; font-size: 20px; font-weight: bold;';
+                phraseElement.style.position = 'relative';
+                phraseElement.appendChild(checkmark);
+                
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalPhrases').textContent = totalPhrasesCount;
+            document.getElementById('learnedCount').textContent = learnedPhrases.size;
+            
+            const progressPercent = Math.round((learnedPhrases.size / totalPhrasesCount) * 100);
+            document.getElementById('progressPercent').textContent = progressPercent + '%';
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function showRandomPhrase() {
+            const allPhrases = [];
+            Object.values(fijianData).forEach(category => {
+                allPhrases.push(...category.phrases);
+            });
+            
+            const randomPhrase = allPhrases[Math.floor(Math.random() * allPhrases.length)];
+            
+            alert(`🌺 Random Phrase 🌺\n\nFijian: ${randomPhrase.fijian}\nEnglish: ${randomPhrase.english}\nPronunciation: ${randomPhrase.pronunciation}`);
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(randomPhrase.fijian);
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
+ 
